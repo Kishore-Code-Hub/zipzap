@@ -1,44 +1,32 @@
 # ZipZap
 
 A lightweight, professional archive manager built with Python + PyQt6.
-Works like 7-Zip / WinRAR — fast, clean, and fully open source.
+Designed for simplicity, speed, and clean aesthetics — purely utilizing Python's built-in `zipfile` for a standalone, dependency-free experience.
 
 ## Features
 
-- **format support**: ZIP
-- **File explorer UI**: folder tree (left) + file list (right) with breadcrumb navigation
-- **Smart Extract**: auto-detects archive structure; wraps loose files in a folder
-- **Compress**: create ZIP archives with Fast / Normal / Ultra compression
-- **Drag & Drop**: drop archives or folders directly into the window
-- **Dark / Light theme**: toggle instantly via toolbar or menu
-- **Context menu**: right-click files for Open, Extract, Delete, Properties
-- **Password support**: detects password-protected archives and prompts
-- **Progress bar**: real-time feedback during extract/compress
-- **Recent files**: remembers last opened archives
-- **Keyboard shortcuts**: Ctrl+O, Ctrl+E, Del, Alt+← / Alt+→
-- **Logging**: writes to `zipzap.log`
+- **ZIP Format Support**: Fast and reliable ZIP extraction and compression.
+- **Dependency-Free**: Pure Python implementation using the built-in `zipfile` module. No external CLI tools like 7-Zip or WinRAR are required.
+- **Modern UI**: A clean, intuitive interface featuring a two-button home screen for Extract and Compress flows.
+- **Drag & Drop**: Seamlessly drop ZIP files to extract, or drop files and folders to compress them instantly.
+- **Smart Extract**: Automatically avoids overwriting existing folders when extracting.
+- **Non-blocking Workflows**: Multi-threaded extraction and compression with real-time progress bars and status updates.
+- **Stand-alone**: Easily packaged into a single executable.
 
 ## Project Structure
 
-```
+```text
 d:\zip application\
 ├── main.py                 # Entry point
 ├── requirements.txt
 ├── ui/
-│   ├── main_window.py      # Main window (toolbar, panels, logic)
-│   ├── folder_tree.py      # Left panel — folder navigation
-│   ├── file_table.py       # Right panel — file list table
-│   ├── dialogs.py          # Compress / Password / About dialogs
-│   └── themes.py           # Light & Dark QSS stylesheets
+│   ├── main_window.py      # Main window (Extract/Compress flows, drag & drop)
+│   └── themes.py           # Modern dark UI stylesheet
 ├── core/
-│   ├── archive_manager.py  # Read / extract / compress logic
-│   └── worker.py           # QThread workers
+│   ├── archive_manager.py  # Core zipfile extraction / compression logic
+│   └── worker.py           # QThread workers for background processing
 ├── utils/
-│   ├── helpers.py          # File size formatting, type detection
-│   └── settings.py         # QSettings persistence
-├── context_menu.reg        # Windows right-click integration
-├── create_shortcut.ps1     # Shortcut generator
-├── zipzap.jpg              # App icon / logo
+│   └── helpers.py          # File size formatting utilities
 └── README.md
 ```
 
@@ -57,17 +45,7 @@ python main.py
 ## Build Standalone EXE
 
 ```bash
-pyinstaller --noconfirm --onefile --windowed --icon="zipzap.ico" --name="ZipZap" main.py
+pyinstaller --noconfirm --onefile --windowed --name="ZipZap" main.py
 ```
 
 The output will be in `dist/ZipZap.exe`.
-
-## Windows Context Menu
-
-Edit paths in `context_menu.reg` to point to your `ZipZap.exe`, then double-click the `.reg` file.
-
-## Create Shortcut
-
-```powershell
-powershell -ExecutionPolicy Bypass -File create_shortcut.ps1
-```
