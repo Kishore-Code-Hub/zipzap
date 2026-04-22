@@ -1,0 +1,13 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\*\shell\ZipZap]
+"MUIVerb"="Extract with ZipZap"
+
+[HKEY_CLASSES_ROOT\*\shell\ZipZap\command]
+@="\"C:\\Program Files\\ZipZap\\ZipZap.exe\" \"%1\""
+
+[HKEY_CLASSES_ROOT\*\shell\ZipZapExtractHere]
+"MUIVerb"="Extract Here (ZipZap)"
+
+[HKEY_CLASSES_ROOT\*\shell\ZipZapExtractHere\command]
+@="\"C:\\Program Files\\ZipZap\\ZipZap.exe\" \"%1\" -extract-here"
