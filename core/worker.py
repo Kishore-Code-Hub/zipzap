@@ -46,20 +46,22 @@ class CompressWorker(QThread):
     status = pyqtSignal(str)
     done = pyqtSignal(bool, str, int)  # ok, msg, final_size
 
-    def __init__(self, sources: list[str], output: str, level: int = 6):
+    def __init__(self, sources: list[str], output: str, format: str = "ZIP", level: str = "Normal"):
         super().__init__()
         self.sources = sources
         self.output = output
+        self.format = format
         self.level = level
 
     def run(self):
         try:
-            def _cb(cur, tot, fn):
-                self.progress.emit(int(cur / max(tot, 1) * 100))
-                self.status.emit(fn)
+            def _cb(pct, text):
+                self.progress.emit(pct)
+                self.status.emit(f"Compressing... {pct}%")
 
-            final_size = compress_zip(self.sources, self.output, self.level, _cb)
+            final_size, final_path = compress_zip(self.sources, self.output, self.format, self.level, _cb)
             self.progress.emit(100)
-            self.done.emit(True, self.output, final_size)
+            self.done.emit(True, final_path, final_size)
         except Exception as e:
             self.done.emit(False, str(e), 0)
+

@@ -28,24 +28,56 @@ def smart_dest(archive: str, base_dest: str) -> str:
     return f"{dest} ({c})"
 
 
-def compress_zip(sources: list[str], output: str, level: int = 6, progress_cb=None):
-    """Compress *sources* into a ZIP. Returns final file size."""
-    all_files = []
-    for s in sources:
-        if os.path.isfile(s):
-            all_files.append((s, os.path.basename(s)))
-        elif os.path.isdir(s):
-            base = os.path.dirname(s)
-            for root, _, files in os.walk(s):
-                for f in files:
-                    fp = os.path.join(root, f)
-                    all_files.append((fp, os.path.relpath(fp, base)))
+def get_unique_filename(path: str) -> str:
+    """Smart auto file naming if file exists."""
+    if not os.path.exists(path):
+        return path
+    directory = os.path.dirname(path)
+    filename = os.path.basename(path)
+    name, ext = os.path.splitext(filename)
+    counter = 1
+    while True:
+        new_name = f"{name}({counter}){ext}"
+        new_path = os.path.join(directory, new_name)
+        if not os.path.exists(new_path):
+            return new_path
+        counter += 1
 
-    total = len(all_files)
-    with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED, compresslevel=level) as zf:
-        for i, (fp, arc) in enumerate(all_files):
-            zf.write(fp, arc)
+
+def compress_zip(sources: list[str], output: str, format: str = "ZIP", level: str = "Normal", progress_cb=None):
+    """Compress using pure Python zipfile module."""
+    if not output.lower().endswith(".zip"):
+        output += ".zip"
+        
+    output = get_unique_filename(output)
+
+    # Level mapping for zipfile
+    level_map = {"Fast": 1, "Normal": 6, "Maximum": 9}
+    compresslevel = level_map.get(level, 6)
+
+    # Collect all files to compress to calculate total size or items for progress
+    files_to_compress = []
+    for src in sources:
+        if os.path.isfile(src):
+            files_to_compress.append((src, os.path.basename(src)))
+        elif os.path.isdir(src):
+            base_dir = os.path.dirname(src)
+            for root, _, files in os.walk(src):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    arcname = os.path.relpath(file_path, base_dir)
+                    files_to_compress.append((file_path, arcname))
+
+    total = len(files_to_compress)
+    if total == 0:
+        raise Exception("No files found to compress.")
+
+    with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=compresslevel) as zf:
+        for i, (file_path, arcname) in enumerate(files_to_compress):
+            zf.write(file_path, arcname)
             if progress_cb:
-                progress_cb(i + 1, total, arc)
+                pct = int((i + 1) / total * 100)
+                progress_cb(pct, arcname)
 
-    return os.path.getsize(output)
+    return os.path.getsize(output), output
+
