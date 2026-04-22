@@ -5,10 +5,10 @@ Works like 7-Zip / WinRAR — fast, clean, and fully open source.
 
 ## Features
 
-- **Multi-format support**: ZIP, 7Z, RAR, TAR, GZ, BZ2
+- **format support**: ZIP
 - **File explorer UI**: folder tree (left) + file list (right) with breadcrumb navigation
 - **Smart Extract**: auto-detects archive structure; wraps loose files in a folder
-- **Compress**: create ZIP / 7Z archives with Fast / Normal / Ultra compression
+- **Compress**: create ZIP archives with Fast / Normal / Ultra compression
 - **Drag & Drop**: drop archives or folders directly into the window
 - **Dark / Light theme**: toggle instantly via toolbar or menu
 - **Context menu**: right-click files for Open, Extract, Delete, Properties
